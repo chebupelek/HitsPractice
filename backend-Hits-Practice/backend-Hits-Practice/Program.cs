@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<EventsContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("EventsContext")));
 
+builder.Services.AddDbContext<LogContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("LogContext")));
+
 
 
 builder.Services.AddControllers();
@@ -80,8 +83,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var EventContext = scope.ServiceProvider.GetRequiredService<EventsContext>();
+    var TokenContext = scope.ServiceProvider.GetRequiredService<LogContext>();
 
     await EventContext.Database.MigrateAsync();
+    await TokenContext.Database.MigrateAsync();
 }
 
 

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("backend-Hits-Practice")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2cd3b7c9a5545a5326b6b405df55f1070e499ece")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("backend-Hits-Practice")]
 [assembly: System.Reflection.AssemblyTitleAttribute("backend-Hits-Practice")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
