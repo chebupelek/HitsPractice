@@ -75,4 +75,31 @@ public class UserController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpPost]
+    [Route("registration/employee")]
+    public async Task<ActionResult> EmployeeRegistration([FromBody] EmployeeBidModel request)
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            if ((!ModelState.IsValid) || (request == null))
+            {
+                return BadRequest();
+            }
+
+            await _userService.CreateEmployeeBidAsync(request);
+
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

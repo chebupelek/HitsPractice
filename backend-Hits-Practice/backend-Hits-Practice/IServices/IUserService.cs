@@ -9,4 +9,5 @@ public interface IUserService
     Task<UserModel> GetProfileAsync(string jwtToken);
     Task<string> RegisterDeanAsync(DeanRegistrationModel dean);
     Task<string> RegisterStudentAsync(StudentRegistrationModel student);
+    Task<bool> CreateEmployeeBidAsync(EmployeeBidModel bid);
 }

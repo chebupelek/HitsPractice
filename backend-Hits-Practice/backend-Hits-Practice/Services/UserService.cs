@@ -75,6 +75,43 @@ public class UserService: IUserService
         return token;
     }
 
+    public async Task<bool> CreateEmployeeBidAsync(EmployeeBidModel bid)
+    {
+        var existingemployee = await _eventsContext.Users.FirstOrDefaultAsync(d => d.Email == bid.Email);
+        if (existingemployee != null)
+        {
+            throw new ArgumentException("A employee with this email already exists");
+        }
+
+        var existingbid = await _eventsContext.Bids.FirstOrDefaultAsync(d => d.Email == bid.Email);
+        if (existingbid != null)
+        {
+            throw new ArgumentException("A bid with this email already exists");
+        }
+
+        var company = await _eventsContext.Companies.FirstOrDefaultAsync(com => com.Id == bid.CompanyId);
+        if (company == null)
+        {
+            throw new ArgumentException("A company with this id doesnt exists");
+        }
+
+        var newBid = new BidDbModel
+        {
+            Id = Guid.NewGuid(),
+            FullName = bid.FullName,
+            Email = bid.Email,
+            Password = _passwordHasher.HashPassword(bid.Email, bid.Password),
+            CreateTime = DateTime.Now.ToUniversalTime(),
+            CompanyId = bid.CompanyId,
+            Company = company
+        };
+
+        _eventsContext.Bids.Add(newBid);
+        await _eventsContext.SaveChangesAsync();
+
+        return true;
+    }
+
     public async Task<Guid> GetUserIdAsync(string token)
     {
         var tokenCheck = await _tokenService.IsTokenValidAsync(token);
