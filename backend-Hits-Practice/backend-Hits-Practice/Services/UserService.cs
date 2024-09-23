@@ -2,6 +2,7 @@
 using Events.EventsDbModels;
 using Events.innerModels;
 using Events.Interfaces;
+using Events.requestsModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,6 +21,31 @@ public class UserService: IUserService
         _eventsContext = eventsContext ?? throw new ArgumentNullException(nameof(eventsContext));
         _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         _passwordHasher = new PasswordHasher<string>();
+    }
+
+    public async Task<string> RegisterDeanAsync(DeanRegistrationModel dean)
+    {
+        var existingdean = await _eventsContext.Users.FirstOrDefaultAsync(d => d.Email == dean.Email);
+        if (existingdean != null)
+        {
+            throw new ArgumentException("A dean with this email already exists");
+        }
+
+        var newDean = new DeanDbModel
+        {
+            Id = Guid.NewGuid(),
+            FullName = dean.FullName,
+            Email = dean.Email,
+            Password = _passwordHasher.HashPassword(dean.Email, dean.Password)
+        };
+
+        _eventsContext.Deans.Add(newDean);
+        await _eventsContext.SaveChangesAsync();
+
+        var token = _tokenService.CreateToken(newDean);
+        await _tokenService.ValidateTokenAsync(token, newDean.Id);
+
+        return token;
     }
 
     public async Task<Guid> GetUserIdAsync(string token)
