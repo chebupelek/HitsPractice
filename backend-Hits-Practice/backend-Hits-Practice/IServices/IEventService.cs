@@ -10,4 +10,5 @@ public interface IEventService
     Task<bool> AddEventAsync(string token, EventCreateModel eventData);
     Task<bool> ChangeEventAsync(string token, EventChangeModel eventData);
     Task<bool> DeleteEventAsync(string token, EventDeleteModel eventData);
+    Task<bool> SignUpAsync(string token, SignUpEventModel eventData);
 }
