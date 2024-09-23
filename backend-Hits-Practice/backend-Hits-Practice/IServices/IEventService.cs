@@ -7,4 +7,5 @@ namespace Events.Interfaces;
 public interface IEventService
 {
     Task<EventsListResponseModel> GetEventsListAsync(string token, DateTime weekStart);
+    Task<bool> AddEventAsync(string token, EventCreateModel eventData);
 }

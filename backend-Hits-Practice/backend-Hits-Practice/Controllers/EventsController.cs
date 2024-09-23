@@ -61,4 +61,42 @@ public class EventsController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpPost]
+    [Route("create")]
+    [Authorize]
+    public async Task<ActionResult> AddEvent([FromBody] EventCreateModel request)
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrWhiteSpace(jwtToken))
+            {
+                return Unauthorized();
+            }
+
+            await _eventService.AddEventAsync(jwtToken, request);
+
+            return Ok();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

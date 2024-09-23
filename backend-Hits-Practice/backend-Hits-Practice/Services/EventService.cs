@@ -125,4 +125,36 @@ public class EventService: IEventService
 
         return weekList;
     }
+
+    public async Task<bool> AddEventAsync(string token, EventCreateModel eventData)
+    {
+        var userData = await _userService.GetProfileAsync(token);
+        if (userData == null || userData.Role != RoleEnum.Employee) { throw new KeyNotFoundException(); }
+
+        if (eventData.EventDate <= DateTime.Now.ToUniversalTime().AddDays(7)) { throw new ArgumentException(); }
+
+        if (eventData.Deadline != null && eventData.Deadline >= eventData.EventDate) { throw new ArgumentException(); }
+
+        var employee = await _eventsContext.Employees.FirstOrDefaultAsync(e => e.Id == userData.id);
+        if (employee == null) { throw new KeyNotFoundException(); }
+
+        var newEvent = new EventDbModel
+        {
+            Id = Guid.NewGuid(),
+            Name = eventData.Name,
+            Description = eventData.Description,
+            CreatedDate = DateTime.Now.ToUniversalTime(),
+            EventDate = eventData.EventDate,
+            Location = eventData.Location,
+            Deadline = eventData.Deadline,
+            EmployeeId = employee.Id,
+            Employee = employee,
+            Students = new List<StudentDbModel>()
+        };
+
+        _eventsContext.Events.Add(newEvent);
+        await _eventsContext.SaveChangesAsync();
+
+        return true;
+    }
 }
