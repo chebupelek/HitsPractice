@@ -5,4 +5,5 @@ namespace Events.Interfaces;
 public interface ITokenService
 {
     string CreateToken(UserDbModel doctor);
+    Task ValidateTokenAsync(string token, Guid userId);
 }

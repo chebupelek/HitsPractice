@@ -25,5 +25,20 @@ public class TokenService: ITokenService
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(token);
     }
+
+    public async Task ValidateTokenAsync(string token, Guid userId)
+    {
+        var logDb = new LogDbModel
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            LogDate = DateTime.UtcNow,
+            Token = token,
+            IsLog = true
+        };
+
+        _logContext.Log.Add(logDb);
+        await _logContext.SaveChangesAsync();
+    }
 }
 
