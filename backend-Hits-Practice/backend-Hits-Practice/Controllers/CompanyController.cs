@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Events.Interfaces;
 using Events.requestsModels;
+using Events.responseModels;
 
 namespace Events.Controllers;
 
@@ -132,9 +133,11 @@ public class CompanyController : ControllerBase
     [Authorize]
     public async Task<ActionResult> DeleteCompany([FromBody] CompanyDeleteModel request)
     {
+        Console.WriteLine("111111111111111111111111111111");
         try
         {
             await _tokenService.BanningTokensAsync();
+            Console.WriteLine("222222222222222222222222222222222222");
 
             var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             Console.WriteLine(jwtToken);
@@ -143,8 +146,10 @@ public class CompanyController : ControllerBase
             {
                 return Unauthorized();
             }
+            Console.WriteLine("444444444444444444444444444444444444444444");
 
             await _companyService.DeleteCompany(jwtToken, request);
+            Console.WriteLine("555555555555555555555555555555555");
 
             return Ok();
         }

@@ -23,6 +23,7 @@ public class UserService: IUserService
         _passwordHasher = new PasswordHasher<string>();
     }
 
+
     public async Task<string> RegisterDeanAsync(DeanRegistrationModel dean)
     {
         var existingdean = await _eventsContext.Users.FirstOrDefaultAsync(d => d.Email == dean.Email);
@@ -112,6 +113,7 @@ public class UserService: IUserService
         return true;
     }
 
+
     public async Task<string> AuthorizationAsync(LoginCredentials loginData)
     {
         var existinguser = await _eventsContext.Users.FirstOrDefaultAsync(u => u.Email == loginData.Email);
@@ -133,24 +135,15 @@ public class UserService: IUserService
         return token;
     }
 
-    public async Task<Guid> GetUserIdAsync(string token)
+
+    public async Task LogoutAsync(string jwtToken)
     {
-        var tokenCheck = await _tokenService.IsTokenValidAsync(token);
+        var tokenCheck = await _tokenService.IsTokenValidAsync(jwtToken);
         if (!tokenCheck)
         {
             throw new UnauthorizedAccessException();
         }
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var jsonToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-        var userId = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            throw new KeyNotFoundException("User не найден");
-        }
-        Guid userIdGuid = Guid.Parse(userId);
-
-        return userIdGuid;
+        await _tokenService.InvalidateTokenAsync(jwtToken);
     }
 
 
@@ -195,13 +188,23 @@ public class UserService: IUserService
         return searchedData;
     }
 
-    public async Task LogoutAsync(string jwtToken)
+    public async Task<Guid> GetUserIdAsync(string token)
     {
-        var tokenCheck = await _tokenService.IsTokenValidAsync(jwtToken);
+        var tokenCheck = await _tokenService.IsTokenValidAsync(token);
         if (!tokenCheck)
         {
             throw new UnauthorizedAccessException();
         }
-        await _tokenService.InvalidateTokenAsync(jwtToken);
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var jsonToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+        var userId = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            throw new KeyNotFoundException("User не найден");
+        }
+        Guid userIdGuid = Guid.Parse(userId);
+
+        return userIdGuid;
     }
 }

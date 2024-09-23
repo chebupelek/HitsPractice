@@ -80,6 +80,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IBidService, BidService>();
 
 var app = builder.Build();
 

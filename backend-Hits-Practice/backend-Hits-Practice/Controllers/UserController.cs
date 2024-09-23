@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Events.Interfaces;
 using Events.requestsModels;
 using Events.responseModels;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Events.Controllers;
 
@@ -104,6 +105,7 @@ public class UserController : ControllerBase
         }
     }
 
+
     [HttpPost]
     [Route("login")]
     public async Task<ActionResult> Authorization([FromBody] LoginCredentials request)
@@ -130,6 +132,7 @@ public class UserController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
 
     [HttpPost]
     [Route("logout")]
@@ -183,7 +186,7 @@ public class UserController : ControllerBase
 
             var profile = await _userService.GetProfileAsync(jwtToken);
 
-            return Ok(new RoleResponseModel { Role = profile.Role });
+            return Ok(new RoleResponseModel { Role = profile.Role } );
         }
         catch (UnauthorizedAccessException ex)
         {

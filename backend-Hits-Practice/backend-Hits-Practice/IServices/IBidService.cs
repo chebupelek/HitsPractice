@@ -6,6 +6,6 @@ namespace Events.Interfaces;
 
 public interface IBidService
 {
-    Task<bool> DoBidAsync(string token, AcceptBidModel acc);
     Task<BidsListResponseModel> GetBidsListAsync(string token);
+    Task<bool> DoBidAsync(string token, AcceptBidModel acc);
 }
