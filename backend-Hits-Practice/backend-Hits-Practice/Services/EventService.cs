@@ -253,4 +253,42 @@ public class EventService: IEventService
 
         return true;
     }
+
+    public async Task<RegisteredListResponseModel> GetRegisteredListAsync(string token, Guid id)
+    {
+        var userData = await _userService.GetProfileAsync(token);
+        if (userData == null) { throw new KeyNotFoundException(); }
+
+        var watchingEvent = await _eventsContext.Events.FirstOrDefaultAsync(e => e.Id == id);
+        if (watchingEvent == null) { throw new KeyNotFoundException(); }
+
+        bool isAccess = false;
+
+        if (userData.Role == RoleEnum.Employee)
+        {
+            var employee = await _eventsContext.Employees.FirstOrDefaultAsync(e => e.Id == userData.id);
+            if (employee == null) { throw new KeyNotFoundException(); }
+            if (employee.Id == watchingEvent.EmployeeId) { isAccess = true; }
+        }
+
+        if (isAccess || userData.Role == RoleEnum.Dean)
+        {
+            var list = new RegisteredListResponseModel
+            {
+                students = await _eventsContext.Students
+                    .Where(s => s.Events.Any(e => e.Id == id))
+                    .Select(s => new RegisteredResponseModel
+                    {
+                        Name = s.FullName,
+                        Email = s.Email,
+                    })
+                    .ToListAsync()
+            };
+            return list;
+        }
+        else
+        {
+            throw new ArgumentException();
+        }
+    }
 }

@@ -251,4 +251,42 @@ public class EventsController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpGet]
+    [Route("registered")]
+    [Authorize]
+    public async Task<ActionResult> ListOfRegistered([FromQuery] Guid id)
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrWhiteSpace(jwtToken))
+            {
+                return Unauthorized();
+            }
+
+            var list = await _eventService.GetRegisteredListAsync(jwtToken, id);
+
+            return Ok(list);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }
