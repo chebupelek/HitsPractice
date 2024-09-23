@@ -178,4 +178,21 @@ public class EventService: IEventService
 
         return true;
     }
+
+    public async Task<bool> DeleteEventAsync(string token, EventDeleteModel eventData)
+    {
+        var userData = await _userService.GetProfileAsync(token);
+        if (userData == null || userData.Role != RoleEnum.Employee) { throw new KeyNotFoundException("1"); }
+
+        var deletingEvent = await _eventsContext.Events.FirstOrDefaultAsync(e => e.Id == eventData.id);
+        if (deletingEvent == null) { throw new KeyNotFoundException("2"); }
+
+        if (deletingEvent.EmployeeId != userData.id ||
+            deletingEvent.EventDate <= DateTime.Now.ToUniversalTime()) { throw new ArgumentException("3"); }
+
+        _eventsContext.Events.Remove(deletingEvent);
+        await _eventsContext.SaveChangesAsync();
+
+        return true;
+    }
 }
