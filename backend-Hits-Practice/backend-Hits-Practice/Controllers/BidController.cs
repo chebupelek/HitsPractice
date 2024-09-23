@@ -61,4 +61,42 @@ public class BidController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpGet]
+    [Route("getList")]
+    [Authorize]
+    public async Task<ActionResult> GetBidsList()
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrWhiteSpace(jwtToken))
+            {
+                return Unauthorized();
+            }
+
+            var list = await _bidService.GetBidsListAsync(jwtToken);
+
+            return Ok(list);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

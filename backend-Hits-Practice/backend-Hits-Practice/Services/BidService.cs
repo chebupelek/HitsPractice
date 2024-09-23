@@ -109,4 +109,44 @@ public class BidService: IBidService
 
         return true;
     }
+
+    public async Task<BidsListResponseModel> GetBidsListAsync(string token)
+    {
+        var userData = await _userService.GetProfileAsync(token);
+        if (userData == null) { throw new KeyNotFoundException("User не найден"); }
+
+        if (userData.Role == RoleEnum.Dean)
+        {
+            var bids = new BidsListResponseModel(await _eventsContext.Bids.Select(b => new BidResponseModel
+            {
+                Id = b.Id,
+                CreateTime = b.CreateTime,
+                FullName = b.FullName,
+                Email = b.Email,
+                CompanyId = b.CompanyId,
+                Company = b.Company.Name
+            }).ToListAsync());
+            return bids;
+        }
+
+        if (userData.Role == RoleEnum.Employee)
+        {
+            var bids = new BidsListResponseModel(await _eventsContext.Bids
+                .Where(b => b.Company.Employees.Any(e => e.Id == userData.id))
+                .Select(b => new BidResponseModel
+                {
+                    Id = b.Id,
+                    CreateTime = b.CreateTime,
+                    FullName = b.FullName,
+                    Email = b.Email,
+                    CompanyId = b.CompanyId,
+                    Company = b.Company.Name
+                }).ToListAsync());
+            return bids;
+        }
+        else
+        {
+            throw new ArgumentException(userData.FullName + " " + userData.Email + " " + userData.id.ToString() + " " + userData.Role.ToString());
+        }
+    }
 }
