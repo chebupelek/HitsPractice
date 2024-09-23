@@ -102,4 +102,31 @@ public class UserController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<ActionResult> Authorization([FromBody] LoginCredentials request)
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            if ((!ModelState.IsValid) || (request == null))
+            {
+                return BadRequest();
+            }
+
+            var authorizationResult = await _userService.AuthorizationAsync(request);
+
+            return Ok(new TokenResponseModel { Token = authorizationResult });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

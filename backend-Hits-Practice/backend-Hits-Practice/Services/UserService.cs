@@ -112,6 +112,27 @@ public class UserService: IUserService
         return true;
     }
 
+    public async Task<string> AuthorizationAsync(LoginCredentials loginData)
+    {
+        var existinguser = await _eventsContext.Users.FirstOrDefaultAsync(u => u.Email == loginData.Email);
+        if (existinguser == null)
+        {
+            throw new ArgumentException("A user with this email doesnt exists");
+        }
+
+        var logresult = _passwordHasher.VerifyHashedPassword(loginData.Email, existinguser.Password, loginData.Password);
+
+        if (logresult == PasswordVerificationResult.Failed)
+        {
+            throw new ArgumentException("Wrong password");
+        }
+
+        var token = _tokenService.CreateToken(existinguser);
+        await _tokenService.ValidateTokenAsync(token, existinguser.Id);
+
+        return token;
+    }
+
     public async Task<Guid> GetUserIdAsync(string token)
     {
         var tokenCheck = await _tokenService.IsTokenValidAsync(token);
