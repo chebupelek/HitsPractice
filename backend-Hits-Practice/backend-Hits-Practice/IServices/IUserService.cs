@@ -11,4 +11,5 @@ public interface IUserService
     Task<string> RegisterStudentAsync(StudentRegistrationModel student);
     Task<bool> CreateEmployeeBidAsync(EmployeeBidModel bid);
     Task<string> AuthorizationAsync(LoginCredentials loginData);
+    Task LogoutAsync(string jwtToken);
 }

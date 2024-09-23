@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Events.Interfaces;
 using Events.requestsModels;
 using Events.responseModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Events.Controllers;
 
@@ -119,6 +120,40 @@ public class UserController : ControllerBase
             var authorizationResult = await _userService.AuthorizationAsync(request);
 
             return Ok(new TokenResponseModel { Token = authorizationResult });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("logout")]
+    [Authorize]
+    public async Task<ActionResult> Logout()
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrWhiteSpace(jwtToken))
+            {
+                return Unauthorized();
+            }
+
+            await _userService.LogoutAsync(jwtToken);
+
+            return Ok();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized();
         }
         catch (ArgumentException ex)
         {

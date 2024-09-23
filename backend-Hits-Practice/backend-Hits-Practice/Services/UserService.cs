@@ -194,4 +194,14 @@ public class UserService: IUserService
 
         return searchedData;
     }
+
+    public async Task LogoutAsync(string jwtToken)
+    {
+        var tokenCheck = await _tokenService.IsTokenValidAsync(jwtToken);
+        if (!tokenCheck)
+        {
+            throw new UnauthorizedAccessException();
+        }
+        await _tokenService.InvalidateTokenAsync(jwtToken);
+    }
 }
