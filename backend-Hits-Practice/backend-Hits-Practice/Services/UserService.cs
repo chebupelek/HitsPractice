@@ -48,6 +48,33 @@ public class UserService: IUserService
         return token;
     }
 
+    public async Task<string> RegisterStudentAsync(StudentRegistrationModel student)
+    {
+        var existingstudent = await _eventsContext.Users.FirstOrDefaultAsync(d => d.Email == student.Email);
+        if (existingstudent != null)
+        {
+            throw new ArgumentException("A student with this email already exists");
+        }
+
+        var newStudent = new StudentDbModel
+        {
+            Id = Guid.NewGuid(),
+            FullName = student.FullName,
+            Email = student.Email,
+            Password = _passwordHasher.HashPassword(student.Email, student.Password),
+            GroupNumber = student.Group,
+            Events = new List<EventDbModel>()
+        };
+
+        _eventsContext.Students.Add(newStudent);
+        await _eventsContext.SaveChangesAsync();
+
+        var token = _tokenService.CreateToken(newStudent);
+        await _tokenService.ValidateTokenAsync(token, newStudent.Id);
+
+        return token;
+    }
+
     public async Task<Guid> GetUserIdAsync(string token)
     {
         var tokenCheck = await _tokenService.IsTokenValidAsync(token);

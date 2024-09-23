@@ -48,4 +48,31 @@ public class UserController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpPost]
+    [Route("registration/student")]
+    public async Task<ActionResult> StudentRegistration([FromBody] StudentRegistrationModel request)
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            if ((!ModelState.IsValid) || (request == null))
+            {
+                return BadRequest();
+            }
+
+            var registrationResult = await _userService.RegisterStudentAsync(request);
+
+            return Ok(new TokenResponseModel { Token = registrationResult });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }
