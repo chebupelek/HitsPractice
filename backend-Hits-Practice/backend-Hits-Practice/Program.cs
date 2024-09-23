@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Events.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
-builder.Services.AddDbContext<Context>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Context")));
-*/
+
+builder.Services.AddDbContext<EventsContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("EventsContext")));
+
 
 
 builder.Services.AddControllers();
@@ -74,14 +76,14 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-/*
+
 using (var scope = app.Services.CreateScope())
 {
-    var Context = scope.ServiceProvider.GetRequiredService<Context>();
+    var EventContext = scope.ServiceProvider.GetRequiredService<EventsContext>();
 
-    await Context.Database.MigrateAsync();
+    await EventContext.Database.MigrateAsync();
 }
-*/
+
 
 if (app.Environment.IsDevelopment())
 {
