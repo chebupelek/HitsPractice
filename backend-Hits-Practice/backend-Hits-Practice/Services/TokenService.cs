@@ -54,5 +54,17 @@ public class TokenService: ITokenService
         _logContext.Update(bannedToken);
         _logContext.SaveChanges();
     }
+
+    public async Task<bool> IsTokenValidAsync(string token)
+    {
+        var valToken = await _logContext.Log.FirstOrDefaultAsync(x => x.Token == token);
+
+        if (valToken == null || valToken.IsLog == false)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 
