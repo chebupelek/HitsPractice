@@ -66,5 +66,29 @@ public class TokenService: ITokenService
 
         return true;
     }
+
+    public async Task BanningTokensAsync()
+    {
+        var allTokens = await _logContext.Log.Where(x => x.IsLog == true).ToListAsync();
+
+        foreach (var log in allTokens)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(log.Token) as JwtSecurityToken;
+
+            if (jsonToken != null)
+            {
+                DateTime expirationTime = jsonToken.ValidTo;
+                DateTime currentTime = DateTime.UtcNow;
+
+                if (currentTime >= expirationTime)
+                {
+                    log.IsLog = false;
+                    _logContext.Log.Update(log);
+                    _logContext.SaveChanges();
+                }
+            }
+        }
+    }
 }
 

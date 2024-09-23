@@ -8,4 +8,5 @@ public interface ITokenService
     Task ValidateTokenAsync(string token, Guid userId);
     Task InvalidateTokenAsync(string token);
     Task<bool> IsTokenValidAsync(string token);
+    Task BanningTokensAsync();
 }
