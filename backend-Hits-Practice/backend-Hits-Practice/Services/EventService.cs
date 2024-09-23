@@ -157,4 +157,25 @@ public class EventService: IEventService
 
         return true;
     }
+
+    public async Task<bool> ChangeEventAsync(string token, EventChangeModel eventData)
+    {
+        var userData = await _userService.GetProfileAsync(token);
+        if (userData == null || userData.Role != RoleEnum.Employee) { throw new KeyNotFoundException("1"); }
+
+        var changebleEvent = await _eventsContext.Events.FirstOrDefaultAsync(e => e.Id == eventData.Id);
+        if (changebleEvent == null) { throw new KeyNotFoundException("2"); }
+
+        if (changebleEvent.EmployeeId != userData.id ||
+            changebleEvent.EventDate <= DateTime.Now.ToUniversalTime().AddDays(1)) { throw new ArgumentException("3"); }
+
+        if (eventData.name != null) { changebleEvent.Name = eventData.name; }
+        if (eventData.description != null) { changebleEvent.Description = eventData.description; }
+        if (eventData.location != null) { changebleEvent.Location = eventData.location; }
+
+        _eventsContext.Events.Update(changebleEvent);
+        await _eventsContext.SaveChangesAsync();
+
+        return true;
+    }
 }
