@@ -40,5 +40,19 @@ public class TokenService: ITokenService
         _logContext.Log.Add(logDb);
         await _logContext.SaveChangesAsync();
     }
+
+    public async Task InvalidateTokenAsync(string token)
+    {
+        var bannedToken = await _logContext.Log.FirstOrDefaultAsync(x => x.Token == token);
+
+        if (bannedToken == null)
+        {
+            throw new ArgumentException($"Токен '{token}' не найден.");
+        }
+
+        bannedToken.IsLog = false;
+        _logContext.Update(bannedToken);
+        _logContext.SaveChanges();
+    }
 }
 
