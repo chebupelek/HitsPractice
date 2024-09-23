@@ -221,4 +221,36 @@ public class EventService: IEventService
 
         return true;
     }
+
+    public async Task<bool> UnSignUpAsync(string token, SignUpEventModel eventData)
+    {
+        var userData = await _userService.GetProfileAsync(token);
+        if (userData == null || userData.Role != RoleEnum.Student) { throw new KeyNotFoundException(); }
+
+        var signingEvent = await _eventsContext.Events.FirstOrDefaultAsync(e => e.Id == eventData.id);
+        if (signingEvent == null) { throw new KeyNotFoundException(); }
+
+        var isSignedUp = await _eventsContext.Events
+            .Where(e => e.Id == eventData.id)
+            .AnyAsync(e => e.Students.Any(s => s.Id == userData.id));
+        if (!isSignedUp) { throw new ArgumentException(); }
+
+        var student = await _eventsContext.Students.FirstOrDefaultAsync(s => s.Id == userData.id);
+        if (student == null) { throw new KeyNotFoundException(); }
+
+        if (signingEvent.EventDate <= DateTime.Now.ToUniversalTime()) { return false; }
+
+        var studentEvent = await _eventsContext.Set<Dictionary<string, object>>("StudentEvent")
+            .FirstOrDefaultAsync(se => EF.Property<Guid>(se, "StudentId") == userData.id && EF.Property<Guid>(se, "EventId") == eventData.id);
+
+        if (studentEvent == null)
+        {
+            throw new ArgumentException("Студент не зарегистрирован на это событие.");
+        }
+
+        _eventsContext.Set<Dictionary<string, object>>("StudentEvent").Remove(studentEvent);
+        await _eventsContext.SaveChangesAsync();
+
+        return true;
+    }
 }
