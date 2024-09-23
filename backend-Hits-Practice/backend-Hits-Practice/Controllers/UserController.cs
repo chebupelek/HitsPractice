@@ -164,4 +164,38 @@ public class UserController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpGet]
+    [Route("getRole")]
+    [Authorize]
+    public async Task<ActionResult> GetRole()
+    {
+        try
+        {
+            await _tokenService.BanningTokensAsync();
+
+            var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrWhiteSpace(jwtToken))
+            {
+                return Unauthorized();
+            }
+
+            var profile = await _userService.GetProfileAsync(jwtToken);
+
+            return Ok(new RoleResponseModel { Role = profile.Role });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }
