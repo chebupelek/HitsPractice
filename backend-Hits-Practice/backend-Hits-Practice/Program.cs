@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Events.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Events.Interfaces;
+using Events.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,7 +77,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-//builder.Services.AddScoped<IService, Service>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
