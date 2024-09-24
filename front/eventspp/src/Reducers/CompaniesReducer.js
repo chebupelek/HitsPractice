@@ -41,14 +41,26 @@ export function getNamesThunkCreator() {
     };
 }
 
-export function getCompaniesThunkCreator() {
+export function getCompaniesThunkCreator(navigate) {
     return (dispatch) => {
-        return companiesApi.getCompanies()
+        return companiesApi.getCompanies(navigate)
             .then(response => {
                 if(response !== null){
                     dispatch(setCompaniesActionCreator(response.Companies));
                 }
             })
+    };
+}
+
+export function addCompanyThunkCreator(navigate, data) {
+    return (dispatch) => {
+        return companiesApi.addCompany(navigate, data)
+    };
+}
+
+export function removeCompanyThunkCreator(navigate, data) {
+    return (dispatch) => {
+        return companiesApi.removeCompany(navigate, data)
     };
 }
 

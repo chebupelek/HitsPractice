@@ -1,6 +1,6 @@
 import routers from "../Router/router";
 
-function getCompanies() {
+function getCompanies(navigate) {
     return fetch(routers.companiesList, {
         method: "GET",
         headers: {
@@ -9,7 +9,11 @@ function getCompanies() {
         }
     }).then(response => {
         if(!response.ok){
-            if (response.status === 400) {
+            if (response.status === 401) {
+                localStorage.clear();
+                navigate("/login");
+                return null;
+            } else if (response.status === 400) {
                 alert('Invalid arguments for filtration/pagination');
                 return null;
             } else if (response.status === 500) {
