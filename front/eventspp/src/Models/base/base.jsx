@@ -7,6 +7,7 @@ import Login from '../login/login';
 import RegisterStudent from '../register/studentRegister';
 import RegisterEmployee from '../register/employeeRegister';
 import Events from '../events/events';
+import Companies from '../companies/companies';
 
 function Base() {
     const location = useLocation();
@@ -18,11 +19,12 @@ function Base() {
     return (
         <Container fluid>
             <Routes>
-                <Route path="/" element={localStorage.getItem('token') ? <Navigate to="/events" /> : <Navigate to="/login" />} />
+                <Route path="/" element={localStorage.getItem('token') ? <Navigate to="/events"/> : <Navigate to="/login"/>} />
                 <Route path="/login" element={<Login />}/>
-                <Route path="/register/student" element={<RegisterStudent />}/>
-                <Route path="/register/company" element={<RegisterEmployee />}/>
-                <Route path="/events" element={<Events />}/>
+                <Route path="/register/student" element={<RegisterStudent/>}/>
+                <Route path="/register/company" element={<RegisterEmployee/>}/>
+                <Route path="/events" element={<Events/>}/>
+                <Route path="/companies" element={<Companies/>}/>
             </Routes>
         </Container>
     );

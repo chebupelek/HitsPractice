@@ -34,7 +34,7 @@ const Header = () => {
                                 {token && (<Nav.Link as={Link} to="/events">Мероприятия</Nav.Link>)}
                             </Col>
                             <Col md={2}>
-                                {token && (<Nav.Link as={Link} to="/page1">Компании</Nav.Link>)}
+                                {token && (<Nav.Link as={Link} to="/companies">Компании</Nav.Link>)}
                             </Col>
                             <Col md={2}>
                                 {token && (<Nav.Link as={Link} to="/page1">Заявки</Nav.Link>)}
