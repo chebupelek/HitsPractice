@@ -22,6 +22,7 @@ function login(body) {
         }
         return response.json();
     }).then(data => {
+        console.log(data.token);
         localStorage.setItem("token", data.token);
         return data;
     }).catch(error => {

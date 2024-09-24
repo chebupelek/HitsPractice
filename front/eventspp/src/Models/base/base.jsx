@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import { Container } from 'react-bootstrap';
 
-
+import Login from '../login/login';
 
 function Base() {
     const location = useLocation();
@@ -16,6 +16,7 @@ function Base() {
         <Container fluid>
             <Routes>
                 <Route path="/" element={localStorage.getItem('token') ? <Navigate to="/" /> : <Navigate to="/login" />} />
+                <Route path="/login" element={<Login />}/>
             </Routes>
         </Container>
     );
