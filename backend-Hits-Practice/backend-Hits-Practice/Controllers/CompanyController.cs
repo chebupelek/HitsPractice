@@ -138,7 +138,6 @@ public class CompanyController : ControllerBase
             await _tokenService.BanningTokensAsync();
 
             var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            Console.WriteLine(jwtToken);
 
             if (string.IsNullOrWhiteSpace(jwtToken))
             {
