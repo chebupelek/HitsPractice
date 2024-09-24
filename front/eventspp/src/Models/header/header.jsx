@@ -1,14 +1,21 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Navbar, Nav, Col, Row, Container, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { logoutThunkCreator } from '../../Reducers/UserReducer';
+import { logoutThunkCreator, setRoleThunkCreator } from '../../Reducers/UserReducer';
 
 const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const token = localStorage.getItem("token") !== null;
+    const role = useSelector(state => state.user.role);
+
+    useEffect(() => {
+        if (token) {
+            dispatch(setRoleThunkCreator(navigate));
+        }
+    }, [token, dispatch]);
 
     const handleLogout = () => {
         dispatch(logoutThunkCreator(navigate));
@@ -21,15 +28,21 @@ const Header = () => {
                     <Col md={2} className="fs-4">
                         Мероприятия
                     </Col>
-                    <Col md={2}>
-                        {token && (<Nav.Link as={Link} to="/page1">Кнопка 1</Nav.Link>)}
-                    </Col>
-                    <Col md={2}>
-                        {token && (<Nav.Link as={Link} to="/page1">Кнопка 1</Nav.Link>)}
-                    </Col>
-                    <Col md={2}>
-                        {token && (<Nav.Link as={Link} to="/page1">Кнопка 1</Nav.Link>)}
-                    </Col>
+                    {token && role == 0 ? (
+                        <>
+                            <Col md={2}>
+                                {token && (<Nav.Link as={Link} to="/page1">Мероприятия</Nav.Link>)}
+                            </Col>
+                            <Col md={2}>
+                                {token && (<Nav.Link as={Link} to="/page1">Компании</Nav.Link>)}
+                            </Col>
+                            <Col md={2}>
+                                {token && (<Nav.Link as={Link} to="/page1">Заявки</Nav.Link>)}
+                            </Col>
+                        </>
+                    ) : (
+                        <Col md={6}></Col>
+                    )}
                     <Col md={2}></Col>
                     <Col md={2} className="d-flex justify-content-end">
                         {token ? (
