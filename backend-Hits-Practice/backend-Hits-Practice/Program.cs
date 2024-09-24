@@ -83,6 +83,16 @@ builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IBidService, BidService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
+
 var app = builder.Build();
 
 
@@ -94,6 +104,8 @@ using (var scope = app.Services.CreateScope())
     await EventContext.Database.MigrateAsync();
     await TokenContext.Database.MigrateAsync();
 }
+
+app.UseCors("AllowSpecificOrigin");
 
 
 if (app.Environment.IsDevelopment())
