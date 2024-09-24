@@ -31,7 +31,7 @@ const Header = () => {
                     {token && role == 0 ? (
                         <>
                             <Col md={2}>
-                                {token && (<Nav.Link as={Link} to="/page1">Мероприятия</Nav.Link>)}
+                                {token && (<Nav.Link as={Link} to="/events">Мероприятия</Nav.Link>)}
                             </Col>
                             <Col md={2}>
                                 {token && (<Nav.Link as={Link} to="/page1">Компании</Nav.Link>)}

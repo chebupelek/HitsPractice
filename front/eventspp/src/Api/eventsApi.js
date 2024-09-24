@@ -136,7 +136,7 @@ function deleteEvent(navigate, data){
 }
 
 function signUp(navigate, data){
-    return fetch(routers.signUp, {
+    return fetch(routers.eventSignup, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -160,6 +160,7 @@ function signUp(navigate, data){
                 return null;
             }
         }
+        console.log(response);
         return response.json();
     }).then(data =>{
         return data;

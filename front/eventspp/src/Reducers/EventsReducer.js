@@ -41,48 +41,34 @@ export function getEventsThunkCreator(date, navigate) {
     };
 }
 
-export function addEventThunkCreator(data, navigate, date) {
+export function addEventThunkCreator(data, navigate) {
     return (dispatch) => {
         return eventsApi.addEvent(navigate, data)
-            .then(response => {
-                dispatch(getEventsThunkCreator(date, navigate));
-            })
     };
 }
 
-export function changeEventThunkCreator(data, navigate, date) {
+export function changeEventThunkCreator(data, navigate) {
     return (dispatch) => {
         return eventsApi.changeEvent(navigate, data)
-            .then(response => {
-                dispatch(getEventsThunkCreator(date, navigate));
-            })
     };
 }
 
-export function deleteEventThunkCreator(data, navigate, date) {
+export function deleteEventThunkCreator(data, navigate, ) {
     return (dispatch) => {
         return eventsApi.deleteEvent(navigate, data)
-            .then(response => {
-                dispatch(getEventsThunkCreator(date, navigate));
-            })
     };
 }
 
-export function signUpThunkCreator(data, navigate, date) {
+export function signUpThunkCreator(data, navigate, ) {
+    console.log(data);
     return (dispatch) => {
         return eventsApi.signUp(navigate, data)
-            .then(response => {
-                dispatch(getEventsThunkCreator(date, navigate));
-            })
     };
 }
 
-export function unsignThunkCreator(data, navigate, date) {
+export function unsignThunkCreator(data, navigate, ) {
     return (dispatch) => {
         return eventsApi.unsign(navigate, data)
-            .then(response => {
-                dispatch(getEventsThunkCreator(date, navigate));
-            })
     };
 }
 
