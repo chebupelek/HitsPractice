@@ -5,6 +5,7 @@ import { Container } from 'react-bootstrap';
 
 import Login from '../login/login';
 import RegisterStudent from '../register/studentRegister';
+import RegisterEmployee from '../register/employeeRegister';
 
 function Base() {
     const location = useLocation();
@@ -16,9 +17,10 @@ function Base() {
     return (
         <Container fluid>
             <Routes>
-                <Route path="/" element={localStorage.getItem('token') ? <Navigate to="/login" /> : <Navigate to="/login" />} />
+                <Route path="/" element={localStorage.getItem('token') ? <Navigate to="/register/student" /> : <Navigate to="/login" />} />
                 <Route path="/login" element={<Login />}/>
                 <Route path="/register/student" element={<RegisterStudent />}/>
+                <Route path="/register/company" element={<RegisterEmployee />}/>
             </Routes>
         </Container>
     );

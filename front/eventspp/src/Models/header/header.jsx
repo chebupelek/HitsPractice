@@ -33,7 +33,7 @@ const Header = () => {
                     <Col md={2}></Col>
                     <Col md={2} className="d-flex justify-content-end">
                         {token ? (
-                            <Button type="light" onClick={handleLogout()}>Выйти</Button>
+                            <Button type="light" onClick={handleLogout}>Выйти</Button>
                         ) : (
                             <Nav.Link as={Link} to="/login">Войти</Nav.Link>
                         )}

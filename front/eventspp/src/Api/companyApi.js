@@ -1,12 +1,12 @@
 import routers from "../Router/router";
 
-function studentRegistration(body) {
-    return fetch(routers.userStudent, {
-        method: "POST",
+function getCompanies() {
+    return fetch(routers.companiesList, {
+        method: "GET",
         headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
     }).then(response => {
         if(!response.ok){
             if (response.status === 400) {
@@ -22,23 +22,20 @@ function studentRegistration(body) {
         }
         return response.json();
     }).then(data => {
-        localStorage.setItem("token", data.token);
         return data;
     }).catch(error => {
-        console.log(error.message);
+        console.log(error);
         return null;
     });
 }
 
-function employeeRegistration(body) {
-    return fetch(routers.userEmployee, {
-        method: "POST",
+function getNames() {
+    return fetch(routers.companiesName, {
+        method: "GET",
         headers: {
             "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
+        }
     }).then(response => {
-        console.log(response);
         if(!response.ok){
             if (response.status === 400) {
                 alert('Invalid arguments for filtration/pagination');
@@ -51,17 +48,16 @@ function employeeRegistration(body) {
                 return null;
             }
         }
-        return true;
+        return response.json();
     }).then(data => {
-        console.log(data);
         return data;
     }).catch(error => {
-        console.log(error.message);
+        console.log(error);
         return null;
     });
 }
 
-export const registrationApi = {
-    studentRegistration : studentRegistration,
-    employeeRegistration : employeeRegistration
+export const companiesApi = {
+    getCompanies : getCompanies,
+    getNames : getNames
 }
