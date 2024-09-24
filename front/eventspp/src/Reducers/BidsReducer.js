@@ -23,7 +23,6 @@ export function getBidsListActionCreator(bidsList){
 
 export function getBidsListThunkCreator(navigate) {
     return (dispatch) => {
-        localStorage.clear();
         return bidsApi.getBidList(navigate)
             .then(response => {
                 if(response !== null){
@@ -35,7 +34,10 @@ export function getBidsListThunkCreator(navigate) {
 
 export function accessBidThunkCreator(data, navigate) {
     return (dispatch) => {
-        return bidsApi.accessBid(navigate, data);
+        return bidsApi.accessBid(navigate, data)
+            .then(response => {
+                dispatch(getBidsListThunkCreator(navigate));
+            })
     };
 }
 

@@ -8,6 +8,7 @@ import RegisterStudent from '../register/studentRegister';
 import RegisterEmployee from '../register/employeeRegister';
 import Events from '../events/events';
 import Companies from '../companies/companies';
+import Bids from '../bids/bids';
 
 function Base() {
     const location = useLocation();
@@ -25,6 +26,7 @@ function Base() {
                 <Route path="/register/company" element={<RegisterEmployee/>}/>
                 <Route path="/events" element={<Events/>}/>
                 <Route path="/companies" element={<Companies/>}/>
+                <Route path="/bids" element={<Bids/>}/>
             </Routes>
         </Container>
     );
